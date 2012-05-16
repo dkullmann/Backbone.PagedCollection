@@ -50,11 +50,10 @@
           /*|| this.pages[ this.page ].timestamp < blabla // Something with the cache timestamp? */) {
             
         this.trigger("fetching");
-            
+
         collection = new this.collection();
-        collection.url = this.url;
         collection.parse = this.parse;
-        
+
         options.success = _.bind(function(resp) {
           
           this.pages[ this.page ] = { timestamp: (new Date).getTime(), collection: collection };
@@ -69,12 +68,12 @@
         }, this);
         
         options.parse = this.parse;
-        options.url = this.url() + '/page/' + this.page;
+        options.url = collection.url({ page: this.page });
         
         if (this.dataFilter) {
           options.data = this.dataFilter;
         }
-        
+
         collection.fetch(options);
       }else{
         //Backbone.Collection.prototype.reset.call(this, this.pages[ this.page ].collection.toArray() );
@@ -82,24 +81,33 @@
         
         success && success(self);
       }
+
     },
     
     reset: function(models, options) {
+
       var timestamp = (new Date).getTime(), i, pageCount = Math.max(1, Math.ceil(this.total / this.perPage));
       
       options || (options = {});
         
-      this.total = options.total || models.length;    
-      
+      this.total = options.total || models.length;
+
+      var initialModels = models.length;
+
       this._reset();
       
       if (this.total) {
         // Initialize the collection into pages if provided immediately.
         for(i = 1; i <= pageCount; ++i) {
+
+          if (initialModels < (this.perPage * i)) {
+            break;
+          }
+
           this.pages[i] = { timestamp: timestamp, collection: new this.collection(_.first(models, this.perPage), options) };
           
           this.pages[i].collection.url = this.url;
-          
+
           models = _(models).rest(this.perPage);
         }
       }
