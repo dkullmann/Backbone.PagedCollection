@@ -100,7 +100,7 @@
         // Initialize the collection into pages if provided immediately.
         for(i = 1; i <= pageCount; ++i) {
 
-          if (initialModels < (this.perPage * i)) {
+          if (initialModels < (this.perPage * i) && i !== pageCount) {
             break;
           }
 
