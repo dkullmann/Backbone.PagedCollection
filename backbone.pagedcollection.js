@@ -24,18 +24,18 @@
     
     this.perPage = options.perPage || 10;
     this.total = options.total || models.length;
-    
+   
     this.collection = options.collection || Backbone.Collection;
     
     this.initialize.apply(this, arguments);
     
-    if (models) this.reset(models, {silent: true, parse: options.parse});
+    if (models) this.reset(models, {silent: true, parse: options.parse, total: this.total });
   };
   
   _.extend(PagedCollection.prototype, Backbone.Collection.prototype, {
     initialize: function() {
       _.bindAll(this, 'parse', 'url', 'pageInfo', 'nextPage', 'previousPage');
-      
+
       this.page = 1;
     },
     
