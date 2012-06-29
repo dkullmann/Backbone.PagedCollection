@@ -195,7 +195,13 @@
   
   _.each(methods, function(method) {
     PagedCollection.prototype[method] = function() {
-      var models = this.pages[ this.page ].collection.models;
+      var models;
+      if (typeof this.pages[this.page] !== 'undefined') {
+        models = this.pages[ this.page ].collection.models;
+      } else {
+        models = [];
+      }
+
       return _[method].apply(_, [models].concat(_.toArray(arguments)));
     };
   });
