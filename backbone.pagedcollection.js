@@ -46,7 +46,7 @@
           self = this, 
           success = options.success;
       
-      if (!this.pages[ this.page ]
+      if (!this.pages[ this.page ] || options.force
           /*|| this.pages[ this.page ].timestamp < blabla // Something with the cache timestamp? */) {
             
         this.trigger("fetching");
@@ -68,7 +68,7 @@
         }, this);
         
         options.parse = this.parse;
-        options.url = collection.url({ page: this.page });
+        options.url = collection.url({ page: this.page, limit: this.perPage });
         
         if (this.dataFilter) {
           options.data = this.dataFilter;
@@ -89,6 +89,7 @@
       var timestamp = (new Date).getTime(), i, pageCount = Math.max(1, Math.ceil(this.total / this.perPage));
       
       options || (options = {});
+      models || (models = []);
         
       this.total = options.total || models.length;
 
@@ -99,8 +100,9 @@
       if (this.total) {
         // Initialize the collection into pages if provided immediately.
         for(i = 1; i <= pageCount; ++i) {
-
-          if (initialModels < (this.perPage * i) && i !== pageCount) {
+			var last = this.perPage * i;
+			var first = (this.perPage) * i - this.perPage;
+          if (initialModels <= first) {
             break;
           }
 
